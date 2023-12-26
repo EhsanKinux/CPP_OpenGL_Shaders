@@ -7,6 +7,28 @@
 
 using namespace std;
 
+// define macros
+#define ASSERT(x) if (!(x)) __debugbreak();
+#define GLCall(x) GLClearError();\
+    x;\
+    ASSERT(GLLogCall(#x, __FILE__, __LINE__));
+
+// Error handling
+static void GLClearError()
+{
+    while (glGetError() != GL_NO_ERROR);
+};
+
+static bool GLLogCall(const char* function, const char* file, int line)
+{
+    while (GLenum error = glGetError())
+    {
+        cout << "[OpenGL Error] (" << error << "): " << function << " " << file << ":" << line << endl;
+        return false;
+    };
+    return true;
+};
+
 struct ShaderProgramSource
 {
     string VertexSource;
@@ -165,6 +187,13 @@ int main(void)
         //glVertex2f(  0.5f,  -0.5f );
         //glEnd();
 
+        /*
+        * uncommetn the line below 
+        * and also comment the line after it 
+        * to see how the error handling works
+        */
+
+        //GLCall(glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr));
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         /* Swap front and back buffers */
